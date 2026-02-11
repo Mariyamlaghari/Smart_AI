@@ -12,7 +12,7 @@ export default function BlogTitlesPage() {
   const [topic, setTopic] = useState('');
   const [count, setCount] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
-  const [titles, setTitles] = useState<string[]>([]);
+  const [titles, setTitles] = useState<any[]>([]);
   const [credits, setCredits] = useState<number | null>(null);
 
   const handleGenerate = async (e: React.FormEvent) => {

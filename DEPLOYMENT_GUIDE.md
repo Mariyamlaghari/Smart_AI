@@ -102,6 +102,15 @@ git remote add origin https://github.com/Mariyamlaghari/Smart_AI.git
 # Push to GitHub
 git branch -M main
 git push -u origin main
+
+> **⚠️ Troubleshooting 403 Error:**
+> If you see `Permission denied to [wrong-username]`, it means your computer is logged into the wrong GitHub account.
+>
+> **Solution 1 (Easiest):** Force the correct username:
+> `git remote set-url origin https://YOUR_CORRECT_USERNAME@github.com/username/repo.git`
+>
+> **Solution 2 (Windows):**
+> Open **Credential Manager** > **Windows Credentials** > Find `github.com` > **Remove**.
 ```
 
 ---
