@@ -1,0 +1,346 @@
+{
+  "info": {
+    "name": "SmartAI API Testing",
+    "description": "Complete API tests for SmartAI Platform",
+    "version": "1.0"
+  },
+  "baseUrl": "http://localhost:5000/api",
+  "tests": [
+    {
+      "name": "🏥 Health Check",
+      "method": "GET",
+      "url": "/health",
+      "headers": {},
+      "body": null,
+      "expectedStatus": 200,
+      "description": "Verify API is running"
+    },
+    {
+      "name": "📝 Register User",
+      "method": "POST",
+      "url": "/auth/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "Test@1234",
+        "confirmPassword": "Test@1234"
+      },
+      "expectedStatus": 201,
+      "expectedResponse": {
+        "success": true,
+        "message": "User registered successfully",
+        "token": "<JWT_TOKEN>"
+      },
+      "saveTokenAs": "AUTH_TOKEN"
+    },
+    {
+      "name": "🔓 Login User",
+      "method": "POST",
+      "url": "/auth/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "john@example.com",
+        "password": "Test@1234"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "message": "Login successful",
+        "token": "<JWT_TOKEN>"
+      },
+      "saveTokenAs": "AUTH_TOKEN"
+    },
+    {
+      "name": "👤 Get My Profile",
+      "method": "GET",
+      "url": "/auth/me",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}"
+      },
+      "body": null,
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "user": {
+          "_id": "<USER_ID>",
+          "name": "John Doe",
+          "email": "john@example.com",
+          "credits": 10,
+          "subscriptionPlan": "Free"
+        }
+      }
+    },
+    {
+      "name": "✏️ Update Profile",
+      "method": "PUT",
+      "url": "/auth/me",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "John Updated",
+        "phone": "+1234567890",
+        "bio": "AI Enthusiast"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "message": "Profile updated successfully"
+      }
+    },
+    {
+      "name": "💳 Get Subscription Plans",
+      "method": "GET",
+      "url": "/payments/plans",
+      "headers": {},
+      "body": null,
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "plans": [
+          {
+            "_id": "<PLAN_ID>",
+            "name": "Free",
+            "credits": 10,
+            "price": 0
+          },
+          {
+            "_id": "<PLAN_ID>",
+            "name": "Starter",
+            "credits": 100,
+            "price": 9.99
+          },
+          {
+            "_id": "<PLAN_ID>",
+            "name": "Pro",
+            "credits": 500,
+            "price": 29.99
+          },
+          {
+            "_id": "<PLAN_ID>",
+            "name": "Enterprise",
+            "credits": 2000,
+            "price": 99.99
+          }
+        ]
+      },
+      "savePlanIdAs": "PLAN_ID"
+    },
+    {
+      "name": "💰 Create Payment Intent",
+      "method": "POST",
+      "url": "/payments/create-intent",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "planId": "{{PLAN_ID}}",
+        "creditsAmount": 100
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "clientSecret": "<STRIPE_CLIENT_SECRET>",
+        "amount": 999,
+        "currency": "usd"
+      },
+      "saveClientSecretAs": "CLIENT_SECRET"
+    },
+    {
+      "name": "✅ Confirm Payment",
+      "method": "POST",
+      "url": "/payments/confirm",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentIntentId": "{{PAYMENT_INTENT_ID}}",
+        "planId": "{{PLAN_ID}}"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "message": "Payment successful",
+        "credits": 100
+      }
+    },
+    {
+      "name": "📊 Get Payment History",
+      "method": "GET",
+      "url": "/payments/history?page=1&limit=10",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}"
+      },
+      "body": null,
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "payments": [
+          {
+            "_id": "<PAYMENT_ID>",
+            "amount": 999,
+            "creditsAdded": 100,
+            "status": "completed",
+            "timestamp": "2026-02-11T10:00:00.000Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "📝 Article Writer",
+      "method": "POST",
+      "url": "/tools/article-writer",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "prompt": "Write about AI and Machine Learning",
+        "tone": "professional",
+        "wordLimit": 500,
+        "language": "english"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "content": "<GENERATED_ARTICLE>",
+        "creditsUsed": 1,
+        "remainingCredits": 99
+      }
+    },
+    {
+      "name": "📰 Blog Title Generator",
+      "method": "POST",
+      "url": "/tools/blog-titles",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "topic": "Artificial Intelligence",
+        "count": 5
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "titles": [
+          "Title 1",
+          "Title 2",
+          "Title 3",
+          "Title 4",
+          "Title 5"
+        ],
+        "creditsUsed": 1
+      }
+    },
+    {
+      "name": "🖼️ Image Generation",
+      "method": "POST",
+      "url": "/tools/image-generation",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "prompt": "A beautiful sunset over mountains",
+        "style": "digital art",
+        "width": 1024,
+        "height": 768,
+        "quality": "high"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "imageUrl": "<GENERATED_IMAGE_URL>",
+        "creditsUsed": 1
+      }
+    },
+    {
+      "name": "🎞️ Background Removal",
+      "method": "POST",
+      "url": "/tools/background-removal",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "imageUrl": "https://example.com/image.jpg"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "processedImageUrl": "<PROCESSED_IMAGE_URL>",
+        "creditsUsed": 1
+      },
+      "note": "Upload actual image for real testing"
+    },
+    {
+      "name": "🔨 Object Removal",
+      "method": "POST",
+      "url": "/tools/object-removal",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "imageUrl": "https://example.com/image.jpg",
+        "coordinates": {
+          "x": 100,
+          "y": 100,
+          "width": 50,
+          "height": 50
+        }
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "processedImageUrl": "<PROCESSED_IMAGE_URL>",
+        "creditsUsed": 1
+      }
+    },
+    {
+      "name": "📄 Resume Reviewer",
+      "method": "POST",
+      "url": "/tools/resume-reviewer",
+      "headers": {
+        "Authorization": "Bearer {{AUTH_TOKEN}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "resumeText": "Your resume content here...",
+        "jobDescription": "Job description here (optional)"
+      },
+      "expectedStatus": 200,
+      "expectedResponse": {
+        "success": true,
+        "feedback": "<AI_FEEDBACK>",
+        "score": 7.5,
+        "suggestions": ["Suggestion 1", "Suggestion 2"],
+        "creditsUsed": 1
+      }
+    }
+  ],
+  "curlExamples": {
+    "registerUser": "curl -X POST http://localhost:5000/api/auth/register -H 'Content-Type: application/json' -d '{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"Test@1234\",\"confirmPassword\":\"Test@1234\"}'",
+    "loginUser": "curl -X POST http://localhost:5000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"john@example.com\",\"password\":\"Test@1234\"}'",
+    "getProfile": "curl -X GET http://localhost:5000/api/auth/me -H 'Authorization: Bearer <YOUR_TOKEN>'",
+    "getPlans": "curl -X GET http://localhost:5000/api/payments/plans",
+    "articleWriter": "curl -X POST http://localhost:5000/api/tools/article-writer -H 'Authorization: Bearer <YOUR_TOKEN>' -H 'Content-Type: application/json' -d '{\"prompt\":\"Write about AI\",\"tone\":\"professional\",\"wordLimit\":500,\"language\":\"english\"}'"
+  },
+  "importantNotes": {
+    "testCard": "4242 4242 4242 4242 (Visa test card)",
+    "expiryDate": "Any future date (e.g., 12/25)",
+    "cvc": "Any 3 digits (e.g., 123)",
+    "baseUrl": "Change to production URL when deploying",
+    "authentication": "All protected endpoints require 'Authorization: Bearer <token>' header",
+    "credits": "Each tool uses 1 credit per use"
+  }
+}
